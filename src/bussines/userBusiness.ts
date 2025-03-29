@@ -1,21 +1,20 @@
 import { UserRepository } from "../repository/userRepository";
-import { hash } from "../services/hashManager";
 import { IUser, IUserInputDTO } from "../types/userTypes";
-import { IdGenerator } from "../services/idGenerator";
+import { hash, compare } from "../services/hashManager";
+import { generatedId } from "../services/idGenerator";
 
 export class UserBusiness {
   private userRepository = new UserRepository();
-  private idGenerator = new IdGenerator();
 
   async createUser(userInput: IUserInputDTO): Promise<IUser> {
-    const id = this.idGenerator.generate();
-    const hashedPassword = await hash(userInput.password);
+    const id = generatedId();
+    const cypherPassword = await hash(password);
 
     const newUser: IUser = {
       id,
       name: userInput.name,
       email: userInput.email,
-      password: hashedPassword,
+      password: cypherPassword,
     };
 
     return await this.userRepository.save(newUser);
