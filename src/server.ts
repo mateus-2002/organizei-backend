@@ -15,10 +15,14 @@ app.use(express.json());
 connectDB();
 
 // Rotas
-app.use('/api/v1/users', userRoutes);
+app.use('/', userRoutes);
 
 // Middleware de tratamento de erros
 app.use(errorHandler);
+
+app.get('/', (req, res) => {
+  res.send('A API está online');
+});
 
 const PORT = env.PORT;
 
