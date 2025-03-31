@@ -11,4 +11,4 @@ export const compare = async (
   cypherText: string
 ): Promise<boolean> => {
   return bcrypt.compare(plainText, cypherText);
-};
+}; 

@@ -1,30 +1,27 @@
-const express = require("express");
-const mongoose = require("mongoose");
-import { Request, Response } from "express";
-
+import express from 'express';
+import cors from 'cors';
+import { env } from './config/env';
+import connectDB from './config/database';
+import { errorHandler } from './middlewares/errorHandler';
+import userRoutes from './routes/userRoutes';
 
 const app = express();
-const PORT = 3000;
-mongoose.connect('mongodb+srv://organizei:nfameCN5lac0il4w@organizei-api.px4oxxo.mongodb.net/?retryWrites=true&w=majority&appName=organizei-api');
 
-const User = mongoose.model('User',{ name: String, email: String, password: String });
-
+// Middlewares
+app.use(cors());
 app.use(express.json());
 
-app.get("/", (req: Request, res: Response) => {
-    res.send("API rodando com Node.js e TypeScript 🚀");
-});
+// Conectar ao MongoDB
+connectDB();
 
-app.post("/", async (req: Request, res: Response) => {
-    const user = new User({
-        name: req.body.name,
-        email: req.body.email,
-        password: req.body.password
-    })
-    await user.save();
-    res.send(user);
-});
+// Rotas
+app.use('/api/v1/users', userRoutes);
+
+// Middleware de tratamento de erros
+app.use(errorHandler);
+
+const PORT = env.PORT;
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
