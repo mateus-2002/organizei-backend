@@ -15,7 +15,7 @@ app.use(express.json());
 connectDB();
 
 // Rotas
-app.use('/', userRoutes);
+app.use('/user', userRoutes);
 
 // Middleware de tratamento de erros
 app.use(errorHandler);
