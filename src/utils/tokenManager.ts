@@ -1,13 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { AppError } from '../middlewares/errorHandler';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'sua-chave-secreta-aqui';
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
-export const generateToken = (userId: string): string => {
+export const generateToken = (userId: string, expiresIn: jwt.SignOptions["expiresIn"] = '24h'): string => {
   try {
-    return jwt.sign({ id: userId }, JWT_SECRET, {
-      expiresIn: '24h'
-    });
+    return jwt.sign({ id: userId }, JWT_SECRET, { expiresIn });
   } catch (error) {
     throw new AppError('Erro ao gerar token', 500);
   }

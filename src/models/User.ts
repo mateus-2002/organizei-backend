@@ -4,6 +4,9 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  role: string;
+  loginAttempts: number;
+  lastLoginAttempt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -12,6 +15,12 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Nome é obrigatório'],
+    trim: true
+  },
+  coduser: {
+    type: String,
+    required: [true, 'Código do usuário é obrigatório'],
+    unique: true,
     trim: true
   },
   email: {
@@ -24,15 +33,37 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: [true, 'Senha é obrigatória'],
-    minlength: [6, 'A senha deve ter no mínimo 6 caracteres']
+    select: false
   },
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
   },
+  loginAttempts: {
+    type: Number,
+    default: 0
+  },
+  lastLoginAttempt: {
+    type: Date,
+    default: null
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
+  }
 }, {
   timestamps: true
+});
+
+// Middleware para atualizar o updatedAt antes de salvar
+userSchema.pre("save", function(next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 export const User = mongoose.model<IUser>('User', userSchema); 
