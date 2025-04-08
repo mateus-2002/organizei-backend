@@ -23,7 +23,7 @@ export class UserController {
       if (!coduser || !name || !email || !password) {
         throw new AppError("Todos os campos são obrigatórios", 400);
       }
-      const existingUser = await User.findOne({ coduser, email });
+      const existingUser = await User.findOne({ email });
       if (existingUser) {
         throw new AppError("Usuário já existe", 400);
       }
@@ -35,9 +35,9 @@ export class UserController {
         password: hashedPassword,
         role: "user",
       });
-      
+  
       const token = generateToken(user._id as string);
-
+  
       res.status(201).json({
         status: "success",
         data: {
@@ -50,14 +50,11 @@ export class UserController {
           },
         },
       });
-      res.status(201).json({
-        status: "success",
-        data: user,
-      });
     } catch (error) {
       throw new AppError("Erro ao criar usuário", 500);
     }
   }
+  
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
@@ -66,7 +63,7 @@ export class UserController {
         throw new AppError("Email e senha são obrigatórios", 400);
       }
 
-      const user = await User.findOne({  email });
+      const user = await User.findOne({ email });
 
       if (!user) {
         throw new AppError("Usuário não encontrado", 404);
