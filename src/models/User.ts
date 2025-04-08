@@ -1,6 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IUser extends Document {
+  coduser: string;
   name: string;
   email: string;
   password: string;
@@ -12,15 +13,15 @@ export interface IUser extends Document {
 }
 
 const userSchema = new Schema({
-  name: {
-    type: String,
-    required: [true, 'Nome é obrigatório'],
-    trim: true
-  },
   coduser: {
     type: String,
     required: [true, 'Código do usuário é obrigatório'],
     unique: true,
+    trim: true
+  },
+  name: {
+    type: String,
+    required: [true, 'Nome é obrigatório'],
     trim: true
   },
   email: {
