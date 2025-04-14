@@ -126,7 +126,11 @@ export class UserController {
 
       const user = await User.findOne({ email }).select('+password');
       if (!user) {
-        throw new AppError("Usuário não encontrado", 404);
+        res.status(404).json({
+          status: "error",
+          message: "Usuário não encontrado"
+        });
+        return;
       }
 
       // Verifica se a conta está bloqueada
@@ -135,7 +139,11 @@ export class UserController {
         const minutesLeft = Math.ceil((30 * 60 * 1000 - timeDiff) / (60 * 1000));
         
         if (timeDiff < 30 * 60 * 1000) { // 30 minutos
-          throw new AppError(`Conta bloqueada. Tente novamente em ${minutesLeft} minutos.`, 401);
+          res.status(401).json({
+            status: "error",
+            message: `Conta bloqueada. Tente novamente em ${minutesLeft} minutos.`
+          });
+          return;
         } else {
           // Reseta as tentativas após 30 minutos
           user.loginAttempts = 0;
@@ -150,7 +158,11 @@ export class UserController {
         user.lastLoginAttempt = new Date();
         await user.save();
         
-        throw new AppError("Senha incorreta", 401);
+        res.status(401).json({
+          status: "error",
+          message: "Senha incorreta"
+        });
+        return;
       }
 
       // Reseta tentativas após login bem sucedido
@@ -177,12 +189,16 @@ export class UserController {
       });
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new AppError(error.errors[0].message, 400);
+        res.status(400).json({
+          status: "error",
+          message: error.errors[0].message
+        });
+        return;
       }
-      if (error instanceof AppError) {
-        throw error;
-      }
-      throw new AppError("Erro ao fazer login", 500);
+      res.status(500).json({
+        status: "error",
+        message: "Erro ao fazer login"
+      });
     }
   }
 }
