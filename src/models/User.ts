@@ -1,10 +1,11 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 
 export interface IUser extends Document {
   coduser: string;
   name: string;
   email: string;
   password: string;
+  dateOfBirth: Date;
   role: string;
   loginAttempts: number;
   lastLoginAttempt: Date | null;
@@ -12,59 +13,66 @@ export interface IUser extends Document {
   updatedAt: Date;
 }
 
-const userSchema = new Schema({
-  coduser: {
-    type: String,
-    required: [true, 'Código do usuário é obrigatório'],
-    unique: true,
-    trim: true
+const userSchema = new Schema(
+  {
+    coduser: {
+      type: String,
+      required: [true, "Código do usuário é obrigatório"],
+      unique: true,
+      trim: true,
+    },
+    name: {
+      type: String,
+      required: [true, "Nome é obrigatório"],
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, "Email é obrigatório"],
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: [true, "Senha é obrigatória"],
+      select: false,
+    },
+    dateOfBirth: {
+      type: Date,
+      required: [true, "Data de nascimento é obrigatória"],
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    loginAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lastLoginAttempt: {
+      type: Date,
+      default: null,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+    updatedAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  name: {
-    type: String,
-    required: [true, 'Nome é obrigatório'],
-    trim: true
-  },
-  email: {
-    type: String,
-    required: [true, 'Email é obrigatório'],
-    unique: true,
-    trim: true,
-    lowercase: true
-  },
-  password: {
-    type: String,
-    required: [true, 'Senha é obrigatória'],
-    select: false
-  },
-  role: {
-    type: String,
-    enum: ['user', 'admin'],
-    default: 'user'
-  },
-  loginAttempts: {
-    type: Number,
-    default: 0
-  },
-  lastLoginAttempt: {
-    type: Date,
-    default: null
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+  {
+    timestamps: true,
   }
-}, {
-  timestamps: true
-});
+);
 
 // Middleware para atualizar o updatedAt antes de salvar
-userSchema.pre("save", function(next) {
+userSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-export const User = mongoose.model<IUser>('User', userSchema); 
+export const User = mongoose.model<IUser>("User", userSchema);

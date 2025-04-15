@@ -1,9 +1,9 @@
-import express from 'express';
-import cors from 'cors';
-import { env } from './config/env';
-import connectDB from './config/database';
-import { errorHandler } from './middlewares/errorHandler';
-import userRoutes from './routes/userRoutes';
+import express from "express";
+import cors from "cors";
+import { env } from "./config/env";
+import connectDB from "./config/database";
+import { errorHandler } from "./middlewares/errorHandler";
+import userRoutes from "./routes/userRoutes";
 
 const app = express();
 
@@ -15,13 +15,13 @@ app.use(express.json());
 connectDB();
 
 // Rotas
-app.use('/', userRoutes);
+app.use("/", userRoutes);
 
 // Middleware de tratamento de erros
 app.use(errorHandler);
 
-app.get('/', (req, res) => {
-  res.send('A API está online');
+app.get("/", (req, res) => {
+  res.send("A API está online");
 });
 
 const PORT = env.PORT;
