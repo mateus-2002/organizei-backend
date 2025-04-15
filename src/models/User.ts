@@ -7,6 +7,8 @@ export interface IUser extends Document {
   password: string;
   dateOfBirth: Date;
   role: string;
+  plan: mongoose.Types.ObjectId;
+  orgPoints: number;
   loginAttempts: number;
   lastLoginAttempt: Date | null;
   createdAt: Date;
@@ -46,6 +48,15 @@ const userSchema = new Schema(
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+    plan: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Plan",
+      default: null,
+    },
+    orgPoints: {
+      type: Number,
+      default: 0,
     },
     loginAttempts: {
       type: Number,

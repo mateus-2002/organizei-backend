@@ -4,6 +4,7 @@ import { env } from "./config/env";
 import connectDB from "./config/database";
 import { errorHandler } from "./middlewares/errorHandler";
 import userRoutes from "./routes/userRoutes";
+import planRoutes from "./routes/PlanRoutes";
 
 const app = express();
 
@@ -16,6 +17,7 @@ connectDB();
 
 // Rotas
 app.use("/", userRoutes);
+app.use("/", planRoutes);
 
 // Middleware de tratamento de erros
 app.use(errorHandler);

@@ -9,30 +9,40 @@ export class UserController {
     try {
       const { id } = req.params;
       const { name, dateOfBirth } = req.body;
+
+      console.log("ID recebido:", id);
+      console.log("Dados recebidos para atualização:", req.body);
+
       if (!name && !dateOfBirth) {
         throw new AppError(
           "Pelo menos um campo deve ser enviado para atualização",
           400
         );
       }
-      const user = await User.findById(id);
-      if (!user) {
+
+      const updatedUser = await User.findByIdAndUpdate(
+        id,
+        { name, dateOfBirth },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedUser) {
         throw new AppError("Usuário não encontrado", 404);
       }
-      if (name) user.name = name;
-      if (dateOfBirth) user.dateOfBirth = dateOfBirth;
-      await user.save();
+
+      console.log("Usuário atualizado com sucesso:", updatedUser);
 
       res.status(200).json({
         status: "success",
         data: {
-          id: user._id,
-          name: user.name,
-          dateOfBirth: user.dateOfBirth,
-          email: user.email,
+          id: updatedUser._id,
+          name: updatedUser.name,
+          dateOfBirth: updatedUser.dateOfBirth,
+          email: updatedUser.email,
         },
       });
     } catch (error) {
+      console.error("Erro no método editUser:", error);
       if (error instanceof AppError) {
         throw error;
       }
