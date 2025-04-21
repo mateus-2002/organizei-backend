@@ -17,4 +17,4 @@ export const verifyToken = (token: string): { id: string } => {
   } catch (error) {
     throw new AppError('Token inválido ou expirado', 401);
   }
-}; 
+};
