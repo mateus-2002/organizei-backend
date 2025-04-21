@@ -1,13 +1,13 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 interface IList extends Document {
-    _id: number;
+    _id: string;
     name: string;
 }
 const Listschema = new Schema<IList>(
     {
         _id: {
-            type: Number,
+            type: String,
             required: [true, "ID da lista é obrigatório"],
             unique: true,
         },
@@ -16,7 +16,10 @@ const Listschema = new Schema<IList>(
             required: [true, "Nome da lista é obrigatório"],
             trim: true,
         },
-    }
+    },
+    {
+        timestamps: true,
+      }
 );
 
 export const List = mongoose.model<IList>("List", Listschema);

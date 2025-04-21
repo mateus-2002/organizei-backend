@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IArea extends Document {
-  _id:number;
+  _id:String;
   type: string;
   user_id: string;  
 }
@@ -9,7 +9,7 @@ export interface IArea extends Document {
 const areaSchema = new Schema<IArea>(
   {
     _id: {
-      type: Number,
+      type: String,
       required: [true, "ID da área é obrigatório"],
       unique: true,
     },
