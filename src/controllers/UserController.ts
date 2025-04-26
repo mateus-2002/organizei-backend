@@ -10,16 +10,6 @@ export class UserController {
       const { id } = req.params;
       const { name, dateOfBirth } = req.body;
 
-      console.log("ID recebido:", id);
-      console.log("Dados recebidos para atualização:", req.body);
-
-      if (!name && !dateOfBirth) {
-        throw new AppError(
-          "Pelo menos um campo deve ser enviado para atualização",
-          400
-        );
-      }
-
       const updatedUser = await User.findByIdAndUpdate(
         id,
         { name, dateOfBirth },
@@ -29,8 +19,6 @@ export class UserController {
       if (!updatedUser) {
         throw new AppError("Usuário não encontrado", 404);
       }
-
-      console.log("Usuário atualizado com sucesso:", updatedUser);
 
       res.status(200).json({
         status: "success",
@@ -42,7 +30,6 @@ export class UserController {
         },
       });
     } catch (error) {
-      console.error("Erro no método editUser:", error);
       if (error instanceof AppError) {
         throw error;
       }
@@ -53,13 +40,7 @@ export class UserController {
   async signup(req: Request, res: Response): Promise<void> {
     try {
       const { coduser, name, dateOfBirth, email, password } = req.body;
-      if (!coduser || !name || !email || !password || !dateOfBirth) {
-        throw new AppError("Todos os campos são obrigatórios", 400);
-      }
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        throw new AppError("Usuário já existe", 400);
-      }
+      
       const hashedPassword = await hash(password);
       const user = await User.create({
         coduser,
@@ -93,30 +74,19 @@ export class UserController {
   async login(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body;
-      console.log("Dados recebidos:", { email, password });
-
-      if (!email || !password) {
-        console.log("Campos obrigatórios ausentes");
-        throw new AppError("Email e senha são obrigatórios", 400);
-      }
-
       const user = await User.findOne({ email }).select("+password");
-      console.log("Usuário encontrado:", user);
 
       if (!user) {
-        console.log("Usuário não encontrado");
         throw new AppError("Usuário não encontrado", 404);
       }
 
       const isPasswordValid = await compare(password, user.password);
 
       if (!isPasswordValid) {
-        console.log("Senha incorreta");
         throw new AppError("Senha incorreta", 401);
       }
 
       const token = generateToken(user._id as string);
-      console.log("Token gerado:", token);
 
       res.status(200).json({
         status: "success",
@@ -130,7 +100,6 @@ export class UserController {
         },
       });
     } catch (error) {
-      console.error("Erro no login:", error);
       if (error instanceof AppError) {
         throw error;
       }
@@ -142,10 +111,6 @@ export class UserController {
     try {
       const { id } = req.params;
       const user = await User.findById(id).select("-password");
-
-      if (!user) {
-        throw new AppError("Usuário não encontrado", 404);
-      }
 
       res.status(200).json({
         status: "success",
